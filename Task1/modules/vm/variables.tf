@@ -1,4 +1,22 @@
-# Обязательный интерфейс модуля (без привязки к окружению)
+variable "cloud_id" {
+  description = "Идентификатор облака Yandex Cloud"
+  type        = string
+}
+
+variable "folder_id" {
+  description = "Идентификатор каталога Yandex Cloud"
+  type        = string
+}
+
+variable "zone" {
+  description = "Зона по умолчанию для провайдера и ресурсов"
+  type        = string
+}
+
+variable "vm_name" {
+  description = "Имя виртуальной машины"
+  type        = string
+}
 
 variable "cores" {
   description = "Количество ядер (vCPU)"
@@ -6,69 +24,57 @@ variable "cores" {
 }
 
 variable "memory_gb" {
-  description = "Объём RAM в гигабайтах"
+  description = "Объём RAM (ГБ)"
   type        = number
 }
 
 variable "disk_size_gb" {
-  description = "Размер подключаемого диска в гигабайтах"
+  description = "Размер подключаемого диска (ГБ)"
   type        = number
 }
 
 variable "subnet_id" {
-  description = "Идентификатор подсети для сетевого интерфейса ВМ"
+  description = "Идентификатор подсети"
   type        = string
 }
 
 variable "ssh_public_key" {
-  description = "Публичный SSH-ключ для доступа к ВМ"
+  description = "Публичный SSH-ключ"
   type        = string
   sensitive   = true
 }
 
-# Дополнительные параметры инфраструктуры (не «окружение», а технические идентификаторы)
-
-variable "name" {
-  description = "Имя виртуальной машины и префикс имени диска"
-  type        = string
-}
-
-variable "zone" {
-  description = "Зона доступности (должна соответствовать зоне подсети)"
-  type        = string
-}
-
 variable "image_id" {
-  description = "Идентификатор образа ОС для загрузочного диска"
+  description = "Идентификатор образа ОС"
   type        = string
 }
 
 variable "boot_disk_size_gb" {
-  description = "Размер загрузочного диска в гигабайтах"
+  description = "Размер загрузочного диска (ГБ)"
   type        = number
   default     = 20
 }
 
 variable "platform_id" {
-  description = "Платформа вычислительных ресурсов"
+  description = "Платформа CPU"
   type        = string
   default     = "standard-v3"
 }
 
 variable "enable_nat" {
-  description = "Назначить публичный IPv4 (NAT)"
+  description = "Публичный IP (NAT)"
   type        = bool
   default     = true
 }
 
 variable "ssh_user" {
-  description = "Имя пользователя в metadata ssh-keys"
+  description = "Пользователь для SSH в metadata"
   type        = string
   default     = "ubuntu"
 }
 
 variable "labels" {
-  description = "Метки для ВМ и диска (передаются из корня окружения)"
+  description = "Метки ресурсов"
   type        = map(string)
   default     = {}
 }

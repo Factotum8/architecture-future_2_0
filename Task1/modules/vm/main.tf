@@ -1,12 +1,12 @@
 resource "yandex_compute_disk" "attached" {
-  name   = "${var.name}-data"
+  name   = "${var.vm_name}-data"
   size   = var.disk_size_gb
   zone   = var.zone
   labels = var.labels
 }
 
 resource "yandex_compute_instance" "this" {
-  name        = var.name
+  name        = var.vm_name
   platform_id = var.platform_id
   zone        = var.zone
 
