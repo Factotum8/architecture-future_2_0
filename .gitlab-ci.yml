@@ -1,0 +1,3 @@
+# Подключает пайплайн из Task2 (задание 2: Terraform + MinIO backend + GitLab CI)
+include:
+  - local: Task2/.gitlab-ci.yml

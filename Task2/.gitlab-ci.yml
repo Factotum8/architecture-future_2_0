@@ -1,0 +1,70 @@
+# Подключение из корня репозитория: include: local: 'Task2/.gitlab-ci.yml'
+# Переменные GitLab CI/CD (Settings → CI/CD → Variables), пример:
+#   YC_TOKEN — OAuth/сервисный токен Yandex Cloud
+#   MINIO_ENDPOINT — URL MinIO, напр. https://minio.example.com
+#   MINIO_ROOT_USER / MINIO_ROOT_PASSWORD — ключи MinIO )
+
+variables:
+  TF_IN_AUTOMATION: "true"
+  TF_INPUT: "false"
+
+stages:
+  - validate
+  - plan
+  - apply
+
+# --- Проверка синтаксиса без подключения к MinIO (локальный backend отключён) ---
+terraform_validate:
+  stage: validate
+  image: hashicorp/terraform:1.6.6
+  script:
+    - cd Task2/terraform
+    - terraform init -backend=false -input=false
+    - terraform fmt -check -recursive
+    - terraform validate -var-file=../envs/dev/terraform.tfvars
+  rules:
+    - if: $CI_PIPELINE_SOURCE
+
+# --- План с удалённым state в MinIO ---
+terraform_plan:
+  stage: plan
+  image: hashicorp/terraform:1.6.6
+  before_script:
+    - chmod +x Task2/scripts/write_backend_hcl.sh
+    - bash Task2/scripts/write_backend_hcl.sh
+    - cd Task2/terraform
+    # Ключи для Terraform S3 backend (MinIO использует те же переменные, что AWS SDK)
+    - export AWS_ACCESS_KEY_ID="${MINIO_ROOT_USER:-minioadmin}"
+    - export AWS_SECRET_ACCESS_KEY="${MINIO_ROOT_PASSWORD:-minioadmin}"
+  script:
+    - |
+      if [ -z "${YC_TOKEN:-}" ]; then echo "Задайте переменную YC_TOKEN в GitLab CI/CD"; exit 1; fi
+    - terraform init -input=false -backend-config=/tmp/backend.hcl
+    - terraform plan -var-file=../envs/dev/terraform.tfvars -out=tfplan
+  artifacts:
+    paths:
+      - Task2/terraform/tfplan
+    expire_in: 1 week
+  rules:
+    - if: $CI_PIPELINE_SOURCE
+
+# --- Apply вручную (кнопка Play в GitLab) + тот же артефакт плана ---
+terraform_apply:
+  stage: apply
+  image: hashicorp/terraform:1.6.6
+  needs: ["terraform_plan"]
+  when: manual
+  allow_failure: false
+  before_script:
+    - chmod +x Task2/scripts/write_backend_hcl.sh
+    - bash Task2/scripts/write_backend_hcl.sh
+    - cd Task2/terraform
+    - export AWS_ACCESS_KEY_ID="${MINIO_ROOT_USER:-minioadmin}"
+    - export AWS_SECRET_ACCESS_KEY="${MINIO_ROOT_PASSWORD:-minioadmin}"
+  script:
+    - |
+      if [ -z "${YC_TOKEN:-}" ]; then echo "Задайте переменную YC_TOKEN в GitLab CI/CD"; exit 1; fi
+    - terraform init -input=false -backend-config=/tmp/backend.hcl
+    - terraform apply -input=false tfplan
+  rules:
+    - if: $CI_PIPELINE_SOURCE
