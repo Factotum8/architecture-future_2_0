@@ -1,0 +1,47 @@
+@startuml event-storming-future-2-0
+!theme plain
+title Event Storming — основные доменные события и связи
+
+package "Клинические операции" as P_CO #E8F5E9 {
+    rectangle "AppointmentScheduled" <<DomainEvent>> as E_AppSched
+    rectangle "PatientCheckedIn" <<DomainEvent>> as E_CheckIn
+    rectangle "CareEpisodeOpened" <<DomainEvent>> as E_Episode
+  }
+
+  package "ИИ / Диагностика" as P_AI #FFF3E0 {
+    rectangle "AIAssistedStudyOrdered" <<DomainEvent>> as E_AIOrd
+    rectangle "AIStudyCompleted" <<DomainEvent>> as E_AIDone
+  }
+
+  package "Биллинг" as P_BC #F3E5F5 {
+    rectangle "InvoiceIssued" <<DomainEvent>> as E_Inv
+    rectangle "InvoicePaid" <<DomainEvent>> as E_Paid
+  }
+
+  package "Финтех" as P_FT #FCE4EC {
+    rectangle "CreditContractCreated" <<DomainEvent>> as E_Credit
+    rectangle "PaymentSettled" <<DomainEvent>> as E_Pay
+  }
+
+  package "Склад / оборудование" as P_SE #E0F7FA {
+    rectangle "InventoryReserved" <<DomainEvent>> as E_InvRes
+  }
+
+package "Платформа данных\n(обезличенные факты)" as P_DP #ECEFF1 {
+  rectangle "AnalyticsFactRecorded" <<DomainEvent>> as E_An
+}
+
+E_AppSched -down-> E_CheckIn 
+E_CheckIn -down-> E_Episode 
+E_Episode -right-> E_AIOrd : может инициировать
+E_AIOrd -down-> E_AIDone 
+E_Episode -down-> E_Inv : тарификация
+E_Inv -right-> E_Credit : оплата в рассрочку
+E_Credit -down-> E_Pay : исполнение
+E_Inv -down-> E_Paid : оплата счёта
+E_Episode -left-> E_InvRes : расходники
+E_AIDone ..> E_An
+E_Pay ..> E_An
+E_Paid ..> E_An
+
+@enduml
