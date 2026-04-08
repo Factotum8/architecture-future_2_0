@@ -1,0 +1,80 @@
+{
+  "basePath": "/techradar",
+  "baseUrl": "http://localhost:3000",
+  "logoFile": "logo.svg",
+  "labels": {
+    "pageAbout": "О радаре"
+  },
+  "quadrants": [
+    {
+      "id": "languages-and-frameworks",
+      "title": "Языки и фреймворки",
+      "description": "Стек разработки доменных сервисов «Будущее 2.0».",
+      "color": "#4a90d9"
+    },
+    {
+      "id": "platforms-and-infrastructure",
+      "title": "Платформы и инфраструктура",
+      "description": "Облако, контейнеры, данные, интеграция.",
+      "color": "#5cb85c"
+    },
+    {
+      "id": "tools",
+      "title": "Инструменты",
+      "description": "CI/CD, наблюдаемость, каталоги, BI.",
+      "color": "#f0ad4e"
+    },
+    {
+      "id": "methods-and-patterns",
+      "title": "Методы и архитектурные паттерны",
+      "description": "DDD, события, Data Mesh, границы контекстов.",
+      "color": "#d9534f"
+    }
+  ],
+  "rings": [
+    {
+      "id": "adopt",
+      "title": "Adopt",
+      "description": "Стандарт для новых решений в доменах.",
+      "color": "#5cb85c",
+      "radius": 0.5,
+      "strokeWidth": 5
+    },
+    {
+      "id": "trial",
+      "title": "Trial",
+      "description": "Пилоты и ограниченное production-использование.",
+      "color": "#f0ad4e",
+      "radius": 0.69,
+      "strokeWidth": 3
+    },
+    {
+      "id": "assess",
+      "title": "Assess",
+      "description": "Изучение, PoC, лаборатория.",
+      "color": "#5bc0de",
+      "radius": 0.85,
+      "strokeWidth": 2
+    },
+    {
+      "id": "hold",
+      "title": "Hold",
+      "description": "Не развивать; только сопровождение или вывод.",
+      "color": "#c9302c",
+      "radius": 1,
+      "strokeWidth": 1
+    }
+  ],
+  "chart": {
+    "size": 800,
+    "blipSize": 12
+  },
+  "toggles": {
+    "showSearch": true,
+    "showChart": true,
+    "showTagFilter": true,
+    "showQuadrantList": true,
+    "showEmptyRings": true
+  },
+  "sections": ["radar", "tags", "list"]
+}
